@@ -1,0 +1,214 @@
+.nav {
+  content: "";
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  position: relative;
+  top: 0;
+  left: 0;
+  // opacity: .99;
+  z-index: $z-index-menu;
+  width: 100%;
+  height: 0;
+
+  &__checkbox {
+    display: none;
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
+
+  &__btn {
+    position: absolute;
+    top: .8rem;
+    left: 1rem;
+    cursor: pointer;
+
+  
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: none;
+
+    background: radial-gradient(circle at top left,  
+        $color-white 0%, 
+        $color-home-light 70%, 
+        $color-home-dark 100%);
+      
+
+    color: $color-gray-dark;
+    @include dropshadow;
+  
+    &:hover,
+    &:focus,
+    &:active {
+      background: radial-gradient(circle at bottom right,  
+        $color-white 0%, 
+        $color-home-light 70%, 
+        $color-home-dark 100%);
+      @include dropshadow-darker;
+    }
+  
+
+    &-elements {
+      background-color: $color-gray-dark;
+      border: none;
+      border-radius: 0;
+      height: 3px;
+      width: 1.5rem;
+      position: absolute;
+      top: 48%;
+      left: .78rem;
+      // border: 1px solid red;
+      transition: transform 300ms;
+
+  
+      &::before,
+      &::after {
+        background-color: $color-gray-dark;
+        height: 3px;
+        width: 1.5rem;
+        content: "";
+        display: block;
+        transition: transform 300ms;
+      }
+    
+      &::before {
+        transform: translateY(-6px);
+      }
+    
+      &::after {
+        transform: translateY(3px);
+      }
+  
+    }
+
+  }
+
+
+  &__expanded {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: $z-index-menu; 
+    background: linear-gradient(0deg,  
+      rgba($color-gray-dark, .9),
+      rgba($color-secondary-dark, .95));
+    color: $color-black; 
+    width: 100%;
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 300ms, width 500ms, height 500ms, opacity 300ms;
+
+    ul {
+      margin: 4rem auto;
+      list-style: none;
+      min-height: 100%;
+      text-align: center;
+      width: 40%;
+    }
+
+
+      &--ready {
+          background: linear-gradient(0deg,  
+            $color-home-dark 0%,
+            $color-home-light 50%,
+            $color-white 100%);
+      }
+  
+      &--disabled {
+          background: linear-gradient(0deg,  
+            $color-home-dark 50%,
+            $color-home-med 100%);
+          opacity: .8;
+            a {
+              cursor: not-allowed;
+
+            }
+      }
+  
+      li {
+        border-radius: 5px;
+        margin-bottom: 1.5rem;
+  
+        &:hover,
+        &:focus,
+        &:active {
+          background: linear-gradient(0deg,  
+              $color-gray-dark 50%,
+              $color-home-dark 100%);
+          @include dropshadow-darker;
+        }
+    }
+
+    a:link,
+    a:visited {
+      display: block;
+      padding: 1rem;
+      text-decoration: none;
+      color: $color-gray-dark;
+      font-size: $font-default-size;
+      font-weight: bold;
+
+
+      &:hover,
+      &:focus,
+      &:active {
+        color: $color-white;
+      }
+
+    }
+  }
+  
+  // FUNCTIONALITY FOR SHOWING NAV MENU
+
+  &__checkbox:checked ~ &__expanded {
+    width: 100%;
+    height: 100vh;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 300ms, width 500ms, height 500ms, opacity 300ms;
+  }
+
+  &__checkbox:checked + &__btn {
+    z-index: $z-index-menu-btn;
+    transition: filter 300ms;
+
+    &:hover,
+    &:focus,
+    &:active {
+      filter: invert(100%);
+      transition: filter 300ms;
+    }
+
+
+  }
+
+  &__checkbox:checked + &__btn &__btn-elements {
+    transform: rotate(-45deg);
+    transition: transform 300ms filter 300ms;
+
+    &:hover,
+    &:focus,
+    &:active {
+      filter: invert(100%);
+      // background-color: $color-white;
+    }
+
+  }
+
+  &__checkbox:checked + &__btn &__btn-elements::before {
+    transform: rotate(90deg);
+    transition: transform 300ms;
+    &:hover,
+    &:focus,
+    &:active {
+      // background-color: $color-white;
+    }
+  }
+
+  &__checkbox:checked + &__btn &__btn-elements::after {
+    display: none;
+  }
+
+}

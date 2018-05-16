@@ -1,0 +1,42 @@
+// FONTS
+$font-primary: 'Roboto', sans-serif;
+$font-default-size: 1.4rem;
+$font-label-size: 1.2rem;
+
+
+// COLORS
+$color-guest-dark: #BA5A31;
+$color-guest-light: #E59F71;
+$color-guest-med: #ad532d;
+
+$color-home-dark: #889fb3;
+$color-home-med: #c6d1db;
+$color-home-light: #dbe2e8;
+
+
+$color-secondary-very-dark: #8c715a;
+$color-secondary-dark: #b39c88;
+$color-secondary-light: #cdbeb1;
+
+// $color-secondary-dark: #4D5D80;
+// $color-secondary-light: #739FBF;
+$color-white: #F0F0F0;
+$color-black: #222222;
+$color-gray-dark: #444F5A;
+
+// Z-INDEX
+$z-index-bottom: 0;
+$z-index-SB: 50;
+$z-index-periods: 80;
+$z-index-menu: 100;
+$z-index-menu-btn: 150;
+$z-index-splash: 300;
+
+// SPLASH ANIMATION TIMES
+$splash-time-basketball: 3s;
+$splash-time-title: 5s;
+
+
+// BREAKPOINTS
+$app-min-width: 560px;
+$app-max-width: 1200px;
