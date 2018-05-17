@@ -528,7 +528,7 @@ var controller = (function(UICtrl, dataCtrl) {
         // When data is pulled in from JSON, make available
         dataReady: function() {
             var allJSONData = dataCtrl.getData();
-            // console.log(allJSONData);
+            console.log(allJSONData);
             showBasicData(allJSONData);
 
             return allJSONData;
