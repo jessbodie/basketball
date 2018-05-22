@@ -12,14 +12,14 @@ router.use(function(req, res, next) {
   });
 
   // TODO SENDING WRONG FILE, WRONG DIRECTORY is CONST PATH NECESSARY
-router.get('/', function(req, res) {
-    res.sendFile(__dirname + '/dist/index.html');
-  });
-  
 // router.get('/', function(req, res) {
-//     res.json({ message: 'hooray!' });
-//     // res.send('show homepage'); // TODO
+//     res.sendFile(__dirname + '/dist/index.html');
 //   });
+  
+router.get('/', function(req, res) {
+    res.json({ message: 'hooray!' });
+    // res.send('show homepage'); // TODO
+  });
 
 router.post('/teams', async (req, res) => {
     try {
@@ -37,15 +37,30 @@ router.post('/teams', async (req, res) => {
     });
 
 router.get('/teams', async (req, res) => {
-        try {
-            const teams = await Team.find();
-            res.send({
-                teams:teams
-            });
-        } catch (err) {
-            res.status(400).send(err);
+    try {
+        const teams = await Team.find();
+        res.json({
+            teams:teams
+        });
+    } catch (err) {
+        res.status(400).send(err);
         }
     });
 
+router.get('/teams/:id', async (req, res) => {
+ 
+    try {
+        let id = req.params.id;
+        const team = await Team.findById(id);
+        if (!team) {
+            res.status(404).send(`Team not found with ID ${id}.`);
+        }
+        res.json({
+            team:team
+        });
+    } catch (err) {
+        res.status(404).send(err);
+    }
+});
 
 module.exports = router;

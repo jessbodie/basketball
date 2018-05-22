@@ -14,30 +14,7 @@ const bonus = {
     double: 10
 };
 
-        // Get the basic data (roster and teams) from JSON
-        var dataJSON;
-        var homeTeam;
-        function getJSON(ctrl) {
-            // var requestURL = 'http://127.0.0.1:8080/data/data.json';
-            var requestURL = 'http://www.panix.com/~ianr/basketball-scorekeeping/data/data.json';
-            var request = new XMLHttpRequest();
-            request.open('GET', requestURL);
-            request.responseType = 'json';
-            request.send();
-
-            // Wait for JSON to load 
-            request.onload = function() {
-                dataJSON = request.response;
-                console.log(dataJSON); // WORKS
-                homeTeam = dataJSON.teamHome.id;
-                ctrl.dataReady();
-                };   
-        }
-
-
-
-
-
+var homeTeam;
 
 
 export default class Ball {
@@ -78,17 +55,6 @@ export default class Ball {
             ]
         };
     
-    }
-
-    // Start to get the JSON file with team and roster info
-    startGetData(ctrl) {
-        return getJSON(ctrl);
-    }
-
-    // When JSON loaded, return the JSON
-    getData() {
-        // console.log(dataJSON);
-        return dataJSON;
     }
 
     // Return the game's summary data for the active team
@@ -149,11 +115,12 @@ export default class Ball {
         return activity.activities;
     }
 
-    // Update the team IDs for home and guest in the data summary object
-    updateSummaryIDs(homeTeamID, guestTeamID) {
-        summary.game.homeSummary.teamID = homeTeamID;
-        summary.game.guestSummary.teamID = guestTeamID;
-    }
+    
+    // // Update the team IDs for home and guest in the data summary object
+    // updateSummaryIDs(homeTeamID, guestTeamID) {
+    //     summary.game.homeSummary.teamID = homeTeamID;
+    //     summary.game.guestSummary.teamID = guestTeamID;
+    // }
 
     // Update the team IDs for home and guest in the data summary object
     updateSummaryFouls() {

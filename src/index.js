@@ -1,63 +1,80 @@
 console.log('Started');
-import Ball from './models/Ball';
-import * as ballView from './views/ballView';
-import * as base from './views/base';
+import Ball from './js/models/Ball'; // TODO
+import Team from './js/models/Team';
+import * as teamView from './js/views/teamView';
+import * as ballView from './js/views/ballView';
+import * as base from './js/views/base';
 import './scss/main.scss';
 require.context('./img/favicon', false, /^\.\//);
 
 const state = {};
 
-const controller = () => {
+const controller = async () => {
 
-    state.ball = new Ball();
+    state.teamHome = new Team();
+    state.teamGuest = new Team();
+
 
     const toggleHomeGuest = (team) => {
         ballView.toggleTabs(team);
         state.ball.getActiveTeam(team);
     };
 
-    // Show "basic" data (Team Name, Roster) pulled from JSON    
-    const showBasicData = (basic) => {
-        // Display Home Team Name
-        ballView.showDisplayText("team-name--home", basic.teamHome.name);
-        ballView.showDisplayText("team-name--guest", basic.teamGuest.name);
+    // Show "basic" data (Team Name, Roster)     
+    const showBasicData = () => {
+        // Display Team Names
+        teamView.showDisplayText("team-name--home", state.teamHome.name);
+        teamView.showDisplayText("team-name--guest", state.teamGuest.name);
         
 
         // Display Rosters and table rows for Home and Guest teams
         function showRoster (teamToggle, teamID, teamRoster) {
+            console.log('teamRoster: ', teamRoster);
             for (let i = 0; i < teamRoster.length; i++ ) {
-                var playerID = teamRoster[i][0];
-                var playerFirst = teamRoster[i][1].fName;
-                var playerLast = teamRoster[i][1].lName;
-                var playerNumber = teamRoster[i][1].number;
+                var playerID = teamRoster[i]._id;
+                var playerFirst = teamRoster[i].first;
+                var playerLast = teamRoster[i].last;
+                var playerNumber = teamRoster[i].number;
 
-                ballView.addPlayerRow(teamToggle, teamID, playerID, playerFirst, playerLast, playerNumber);
+                teamView.addPlayerRow(teamToggle, teamID, playerID, playerFirst, playerLast, playerNumber);
             }
         }
 
-        showRoster("home", basic.teamHome.id, basic.teamHome.roster);
-        showRoster("guest", basic.teamGuest.id, basic.teamGuest.roster);
+        showRoster("home", state.teamHome.id, state.teamHome.players);
+        showRoster("guest", state.teamGuest.id, state.teamGuest.players);
 
-        state.ball.updateSummaryIDs(basic.teamHome.id, basic.teamGuest.id);
+        state.ball.updateSummaryIDs(state.teamHome.id, state.teamGuest.id);
 
 
         // Update Scoreboard elements with team-specific IDs
-        document.getElementById("-home-to-in").id = basic.teamHome.id + "-home-to-in";
-        document.getElementById("-home-to-btn").id = basic.teamHome.id + "-home-to-btn";
-        document.getElementById("-home-tech-in").id = basic.teamHome.id + "-home-tech-in";
-        document.getElementById("-home-tech-btn").id = basic.teamHome.id + "-home-tech-btn";
-        document.getElementById("-guest-to-in").id = basic.teamGuest.id + "-guest-to-in";
-        document.getElementById("-guest-to-btn").id = basic.teamGuest.id + "-guest-to-btn";
-        document.getElementById("-guest-tech-in").id = basic.teamGuest.id + "-guest-tech-in";
-        document.getElementById("-guest-tech-btn").id = basic.teamGuest.id + "-guest-tech-btn";
+        document.getElementById("-home-to-in").id = state.teamHome.id + "-home-to-in";
+        document.getElementById("-home-to-btn").id = state.teamHome.id + "-home-to-btn";
+        document.getElementById("-home-tech-in").id = state.teamHome.id + "-home-tech-in";
+        document.getElementById("-home-tech-btn").id = state.teamHome.id + "-home-tech-btn";
+        document.getElementById("-guest-to-in").id = state.teamGuest.id + "-guest-to-in";
+        document.getElementById("-guest-to-btn").id = state.teamGuest.id + "-guest-to-btn";
+        document.getElementById("-guest-tech-in").id = state.teamGuest.id + "-guest-tech-in";
+        document.getElementById("-guest-tech-btn").id = state.teamGuest.id + "-guest-tech-btn";
 
 
-        // Score Keeping Buttons/Inputs  Event Listeners
-        SKEventListeners();
+        // // Score Keeping Buttons/Inputs  Event Listeners
+        // SKEventListeners();
 
-        // Reset splash animation so it only shows on first load
-        ballView.splashAnimation();
+        // // Reset splash animation so it only shows on first load
+        // ballView.splashAnimation();
     };
+
+
+    try {
+        await state.teamHome.getTeam('5aff7685dd75d934b37cacaf');
+        console.log('teamHome: ', state.teamHome);
+        await state.teamGuest.getTeam('5aff770384c0b334d87688f3');
+        console.log('teamGuest: ', state.teamGuest);
+        showBasicData();
+    } catch (err) {
+        console.log(err);
+    }
+
 
 
     // Event listeners
@@ -202,9 +219,9 @@ const controller = () => {
     };
     
 
+
     try {
         // Initiate getting data from JSON
-        state.ball.startGetData(controller);
         setupEventListeners();
 
         // Reset the values for the Score Board Time Out and Techs
@@ -217,13 +234,6 @@ const controller = () => {
         // Set Home as default on start
         toggleHomeGuest('home');
 
-        // When data is pulled in from JSON, make available
-        const dataReady = () => {
-            var allJSONData = state.ball.getData();
-            showBasicData(allJSONData);
-
-            return allJSONData;
-        }
 
     } catch (err) {
         console.log(err);
