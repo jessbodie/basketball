@@ -1,9 +1,8 @@
 import axios from 'axios';
 
 export default class Team {
-    constructor () {
-        // this.id = id;
-    }
+    // constructor () {
+    // }
 
     async getTeam(id) {
         try {
