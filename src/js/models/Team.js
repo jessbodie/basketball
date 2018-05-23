@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export default class Team {
     // constructor () {
-    // }
+    // } // TODO
 
     async getTeam(id) {
         try {
@@ -18,12 +18,7 @@ export default class Team {
         }
     }
 
-    // Update the team IDs for home and guest in the data summary object
-    updateSummaryIDs(homeTeamID, guestTeamID) {
-        summary.game.homeSummary.teamID = homeTeamID;
-        summary.game.guestSummary.teamID = guestTeamID;
-    }
-    
+   
 }
 
 
