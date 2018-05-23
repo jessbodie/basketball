@@ -105,8 +105,8 @@
   
       
       &--anim {
-        animation: titleAnim $splash-time-title ease-in-out forwards;
-        animation-delay: calc(#{$splash-time-basketball - .9s});
+        animation: titleAnim $splash-time-title ease-out forwards;
+        animation-delay: calc(#{$splash-time-basketball - .3s});
       }
     }
 
@@ -128,7 +128,7 @@
 
         &--anim {
             animation: subTitleAnim 1s ease-in-out forwards;
-            animation-delay: 4.5s;
+            animation-delay: 4s;
             // animation-delay: calc(#{$splash-time-title / 5});
         }
         }

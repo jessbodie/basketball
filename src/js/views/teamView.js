@@ -1,8 +1,3 @@
-// Add/update display text to a node
-export const showDisplayText = (elementID, text) => {
-    var displayTeam = document.getElementById(elementID);
-    displayTeam.textContent = text;
-};
 
 // Add row for each player
 export const addPlayerRow = (teamToggle, teamID, playerID, first, last, num) => {
@@ -21,4 +16,42 @@ export const addPlayerRow = (teamToggle, teamID, playerID, first, last, num) => 
     // Display player name and number
     document.getElementById("name-"+id).textContent = displayName;
     document.getElementById("num-"+id).textContent = num;
+};
+
+// Update Scoreboard elements with team-specific IDs
+export const updateSBIDs = (team, teamID) => {
+    document.getElementById(`-${team}-to-in`).id = teamID + "-home-to-in";
+    document.getElementById(`-${team}-to-btn`).id = teamID + "-home-to-btn";
+    document.getElementById(`-${team}-tech-in`).id = teamID + "-home-tech-in";
+    document.getElementById(`-${team}-tech-btn`).id = teamID + "-home-tech-btn";
+};
+
+// Remove animation of Score Keeping rows 
+export const removeSKAnimation = () => {
+    var allPlayerRows = document.querySelectorAll(".sk__player");
+    for (let i = 0; i < allPlayerRows.length; i++) {
+        allPlayerRows[i].classList.remove("sk__player--animate");
+    }
+};
+
+// Prevent splash animations from showing if page previously loaded
+export const splashAnimation = () => {
+    var loadedBefore = sessionStorage.getItem("loaded");
+    if (!loadedBefore) {
+        // Clear flag (loadedBefore) and reset to true for 
+        // future page loads
+        sessionStorage.clear();
+        sessionStorage.setItem("loaded", "true");
+    } else if (loadedBefore === "true") {
+        // Remove Splash basketball animation
+        document.getElementById("splash__ball").setAttribute("style", "display: none");
+        // Remove Splash title animation
+        document.getElementById("splash__title").classList.remove("splash__title--anim");
+
+        // Remove container for splash animations so layers underneath can be accessed
+        document.getElementById("splash__anim").setAttribute("style", "display: none");
+
+        // Remove table row animation
+        removeSKAnimation(); // TODO TEST IF THIS WORKS
+    }
 };
