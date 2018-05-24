@@ -1,5 +1,3 @@
-console.log('Started');
-// import Ball from './js/models/Ball'; // TODO
 import Team from './js/models/Team';
 import Game from './js/models/Game'; // TODO
 import * as teamView from './js/views/teamView';
@@ -13,15 +11,12 @@ const state = {};
 const setupEventListeners = () => {
     // When Home or Guest tab is clicked, update flag and UI
     document.getElementById('sb__tab--home').addEventListener('click', function() {
-        base.toggleTabs('home'); // TODO UPDATE DATA STRUCTURE TOO
+        base.toggleTabs('home'); 
         state.game.activeTeam = 'home';
-        console.log('state.game.activeTeam: ', state.game.activeTeam);
-
     });
     document.getElementById('sb__tab--guest').addEventListener('click', function() {
-        base.toggleTabs('guest'); // TODO UPDATE DATA STRUCTURE TOO
+        base.toggleTabs('guest');
         state.game.activeTeam = 'guest';
-        console.log('state.game.activeTeam: ', state.game.activeTeam);
         });
 
     // When Period clicked, add Period to Activity object and update UI
@@ -42,74 +37,76 @@ const setupEventListeners = () => {
     });
 };
 
-    // Check and update Score Board Bonus Indicator
+// TODO
+// Check and update Score Board Bonus Indicator
+const updateBB = () => {
+    // // Get the number of team fouls for the active team
+    // var t = state.game.getActiveTeam();
+    // var teamSummary = state.game.getTeamSummary(t);
+
+    // // Get bonus limits
+    // var b = state.game.getBonus();
+
+    // // Bonus displays for the not active team
+    // if (t === "home") {
+    //     var bbDisplay = "guest"; 
+    // } else {
+    //     var bbDisplay = "home";
+    // }
+    // //  If over first bonus limit display B for Bonus situation
+    // if (teamSummary.fouls === b.single) {
+    //     base.showDisplayText("sb__bb--"+bbDisplay, "B");
+    // }
+    // //  If over second bonus limit display BB for Double Bonus
+    // if (teamSummary.fouls === b.double) {
+    //     base.showDisplayText("sb__bb--"+bbDisplay, "BB");
+    // }
+
+    // // reset at half time, overtime // TODO
+};
+
+
+// Core function to process the inputs from buttons and text fields
+// overWriteValue and prevValue needed for text input fields only
+const process = (input, overWriteValue, prevValue) => {
+    // Change input activity to an array
+    let newActivityArr = input.split("-");
+    console.log('newActivityArr: ', newActivityArr);
+    let team = newActivityArr[0];
+    let playerID = newActivityArr[1];
+    let activityType = newActivityArr[2];
+    let changeInValue = overWriteValue - prevValue;
+
     // TODO
-    const updateBB = () => {
-        // // Get the number of team fouls for the active team
-        // var t = state.game.getActiveTeam();
-        // var teamSummary = state.game.getTeamSummary(t);
+    state.game.saveActivity(team, playerID, activityType, overWriteValue);
+            
+    // Save each individual activity
+    const allActivities = state.game.saveActivity(newActivityArr, overWriteValue);
+    console.log('allActivities: ', allActivities);
 
-        // // Get bonus limits
-        // var b = state.game.getBonus();
-
-        // // Bonus displays for the not active team
-        // if (t === "home") {
-        //     var bbDisplay = "guest"; 
-        // } else {
-        //     var bbDisplay = "home";
-        // }
-        // //  If over first bonus limit display B for Bonus situation
-        // if (teamSummary.fouls === b.single) {
-        //     base.showDisplayText("sb__bb--"+bbDisplay, "B");
-        // }
-        // //  If over second bonus limit display BB for Double Bonus
-        // if (teamSummary.fouls === b.double) {
-        //     base.showDisplayText("sb__bb--"+bbDisplay, "BB");
-        // }
-
-        // // reset at half time, overtime // TODO
+    // 2 - For each activity, update Score Board Summary data and Score Board UI
+    var activityOutput = state.game.updateSummary(team, activityType, changeInValue); 
+    var amtSB = activityOutput[0];
+    var elSB = activityOutput[1];
+    if ((activityType == "fg") || (activityType == "3p") ||
+        (activityType == "fs") || (activityType == "pf")) {
+            base.showDisplayText(elSB, amtSB);
     };
 
-
-    // Core function to process the inputs from buttons and text fields
-    // overWriteValue and prevValue needed for text input fields only
-    const process = (input, overWriteValue, prevValue) => {
-        console.log('PROCESS STARTED.');
-        // Change input activity to an array
-        var newActivityArr = input.split("-");
-        // console.log('state.game: ', state.game);
-                
-        // 1 - Save each individual activity
-        var allActivities = state.game.saveActivity(newActivityArr, overWriteValue);
-        // console.log(allActivities);
-        var activityType = newActivityArr[2];
-        var playerID = newActivityArr[1];
-        var team = newActivityArr[0];
-        var changeInValue = overWriteValue - prevValue;
-
-        // 2 - For each activity, update Score Board Summary data and Score Board UI
-        var activityOutput = state.game.updateSummary(team, activityType, changeInValue); 
-        var amtSB = activityOutput[0];
-        var elSB = activityOutput[1];
-        if ((activityType == "fg") || (activityType == "3p") ||
-            (activityType == "fs") || (activityType == "pf")) {
-                base.showDisplayText(elSB, amtSB);
-        };
-
-        // 2B - For each foul, check and update Score Board Bonus Indicator
-        if (activityType == "pf") {
-            updateBB();
-        };
-
-        // 3 - If button clicked and not overwrite from text input,
-        // for each activity, update corresponding player's edit field
-        if (overWriteValue === undefined) {
-            var elPlayerActivity = input.replace("btn", "in");
-            var amtPlayerActivity = state.game.updatePlayerActivity(activityType, elPlayerActivity); 
-            amtPlayerActivity = parseInt(amtPlayerActivity, 10);
-            gameView.showFieldText(elPlayerActivity, amtPlayerActivity);
-        }
+    // 2B - For each foul, check and update Score Board Bonus Indicator
+    if (activityType == "pf") {
+        updateBB();
     };
+
+    // 3 - If button clicked and not overwrite from text input,
+    // for each activity, update corresponding player's edit field
+    if (overWriteValue === undefined) {
+        var elPlayerActivity = input.replace("btn", "in");
+        var amtPlayerActivity = state.game.updatePlayerActivity(activityType, elPlayerActivity); 
+        amtPlayerActivity = parseInt(amtPlayerActivity, 10);
+        gameView.showFieldText(elPlayerActivity, amtPlayerActivity);
+    }
+};
 
 // Listen for button clicks in Score Keeping and send the input for processing
 const SKEventListeners = () => {

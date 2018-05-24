@@ -3,7 +3,8 @@ const express = require('express');
 const router = express.Router();
 
 const { Team } = require('../models/team'); 
-//TODO const { Game } = require('./models/game'); 
+const { Game } = require('../models/game'); 
+const { Activity } = require('../models/activity'); 
 
 
 router.use(function(req, res, next) {
@@ -16,11 +17,15 @@ router.use(function(req, res, next) {
 //     res.sendFile(__dirname + '/dist/index.html');
 //   });
   
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray!' });
-    // res.send('show homepage'); // TODO
-  });
+// router.get('/', function(req, res) {
+//     res.json({ message: 'hooray!' });
+//     // res.send('show homepage'); // TODO
+//   });
 
+
+///////////////////  
+// Route: /teams //
+///////////////////  
 router.post('/teams', async (req, res) => {
     try {
         var team = new Team({
@@ -35,7 +40,7 @@ router.post('/teams', async (req, res) => {
             res.status(400).send(e);
         };
     });
-
+   
 router.get('/teams', async (req, res) => {
     try {
         const teams = await Team.find();
@@ -57,6 +62,108 @@ router.get('/teams/:id', async (req, res) => {
         }
         res.json({
             team:team
+        });
+    } catch (err) {
+        res.status(404).send(err);
+    }
+});
+
+//////////////////////
+// Route: /activity //
+//////////////////////
+router.post('/activity', async (req, res) => {
+    try {
+            let activity = new Activity({
+                period: req.body.period, 
+                teamID: req.body.teamID, 
+                playerID: req.body.playerID,
+                activityType: req.body.activityType,
+                overwrite: req.body.overwrite
+            });
+        
+            let doc = await activity.save();
+            res.send(doc);
+        } catch (e) {
+            res.status(400).send(e);
+        };
+    });
+
+router.get('/activity', async (req, res) => {
+    try {
+        const activities = await Activity.find();
+        res.json({
+            activities: activities
+        });
+    } catch (err) {
+        res.status(400).send(err);
+        }
+    });
+
+    // Get Activities for a team
+router.get('/activity/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        const activity = await Activity.find({ teamID : id });
+        if (!activity) {
+            res.status(404).send(`Team with ID ${id} has no activities.`);
+        }
+        res.json({
+            activity:activity
+        });
+    } catch (err) {
+        res.status(404).send(err);
+    }
+});
+
+//////////////////
+// Route: /game //
+//////////////////
+router.post('/game', async (req, res) => {
+    try {
+            let game = new Game({
+                period: req.body.period, 
+                home: req.body.home, 
+                guest: req.body.guest,
+            });
+        
+            let doc = await game.save();
+            res.send(doc);
+        } catch (e) {
+            res.status(400).send(e);
+        };
+    });
+
+router.get('/game', async (req, res) => {
+    try {
+        const game = await Game.find();
+        res.json({
+            game: game
+        });
+    } catch (err) {
+        res.status(400).send(err);
+        }
+    });
+
+    // TODO
+    // Update Game Summary data for a team
+router.put('/game', async (req, res) => {
+    try {
+        console.log('req: ', req.body);
+        let gameID = req.body.gameID;
+        let teamID = req.body.teamID;
+        let type = req.body.type;
+        let amt = req.body.amt;
+        const game = await Game.findOneAndUpdate({ 
+                _id: gameID,
+                'this.home.hTeamID': '5b061be553c3dd2187a96177',
+                period: 'YY'
+            }, {"home.score": 44}, {new: true});
+            console.log(game);
+        if (!game) {
+            res.status(404).send(`${teamID} not found.`);
+        }
+        res.json({
+            game:game
         });
     } catch (err) {
         res.status(404).send(err);

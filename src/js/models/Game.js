@@ -52,6 +52,20 @@ export default class Game {
 
     }
 
+    async getActivities(id) {
+        try {
+            const res = await axios.get(`http://localhost:3000/teams/${id}`);
+            this.id = id;
+            this.name = res.data.team.name;
+            // console.log('team name: ', this.name);
+            this.players = res.data.team.players;
+            // console.log(this.players);
+           
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     // Reset the fouls for both teams 
     setTeamIDs(homeID, guestID) {
         this.summary.home.teamID = homeID;
