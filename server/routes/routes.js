@@ -153,12 +153,15 @@ router.put('/game', async (req, res) => {
         let teamID = req.body.teamID;
         let type = req.body.type;
         let amt = req.body.amt;
+        let status = req.body.status;
+        let query = String(status) + '.teamID';
+        console.log(query);
         const game = await Game.findOneAndUpdate({ 
                 _id: gameID,
-                'this.home.hTeamID': '5b061be553c3dd2187a96177',
+                'home.teamID': teamID,
                 period: 'YY'
-            }, {"home.score": 44}, {new: true});
-            console.log(game);
+            }, {'home.score': 88}, {new: true});
+        // console.log(game);
         if (!game) {
             res.status(404).send(`${teamID} not found.`);
         }
