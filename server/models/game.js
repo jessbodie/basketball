@@ -7,6 +7,11 @@ const gameStatsSchema = new Schema({
         required: true,
         trim: true
     },     
+    status: {
+        type: String,
+        required: false,
+        trim: true
+    },     
     score: {
         type: Number,
         required: false,
