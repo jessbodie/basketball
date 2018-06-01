@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "webpack --mode development",
     "build": "webpack --mode production --config webpack.prod.config.js",
-    "startdev": "webpack-dev-server --mode development --open",
+    "startdev": "webpack-dev-server --mode development --hot",
     "start": "node server"
   },
   "author": "Jess Bodie Richards",

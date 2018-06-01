@@ -8,11 +8,15 @@ const { Activity } = require('../models/activity');
 
 
 router.use(function(req, res, next) {
-    console.log('Time: ', Date.now());
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+    res.setHeader('Access-Control-Max-Age', 7200); // Caching 
+    // console.log('Time: ', Date.now());
     next();
   });
 
-  // TODO SENDING WRONG FILE, WRONG DIRECTORY is CONST PATH NECESSARY
+// TODO SENDING WRONG FILE, WRONG DIRECTORY is CONST PATH NECESSARY
 // router.get('/', function(req, res) {
 //     res.sendFile(__dirname + '/dist/index.html');
 //   });
@@ -82,7 +86,7 @@ router.post('/activity', async (req, res) => {
             });
         
             let doc = await activity.save();
-            res.send(doc);
+            res.json(doc);
         } catch (e) {
             res.status(400).send(e);
         };

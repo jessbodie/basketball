@@ -69,21 +69,22 @@ const updateBB = () => {
 // Core function to process the inputs from buttons and text fields
 // overWriteValue and prevValue needed for text input fields only
 const process = (input, overWriteValue, prevValue) => {
-    // Change input activity to an array
+    let period = state.game.summary.period;
+    console.log('period: ', period);
+    // Parse input activity
     let newActivityArr = input.split("-");
-    console.log('newActivityArr: ', newActivityArr);
+    console.log('newActivityArr from index/process: ', newActivityArr);
     let team = newActivityArr[0];
     let playerID = newActivityArr[1];
     let activityType = newActivityArr[2];
     let changeInValue = overWriteValue - prevValue;
+    if (overWriteValue === undefined) {
+        overWriteValue = false;
+    }
 
-    // TODO
-    state.game.saveActivity(team, playerID, activityType, overWriteValue);
+    state.game.saveActivity(period, team, playerID, activityType, overWriteValue);
             
-    // Save each individual activity
-    const allActivities = state.game.saveActivity(newActivityArr, overWriteValue);
-    console.log('allActivities: ', allActivities);
-
+    // TODO
     // 2 - For each activity, update Score Board Summary data and Score Board UI
     var activityOutput = state.game.updateSummary(team, activityType, changeInValue); 
     var amtSB = activityOutput[0];
@@ -158,14 +159,15 @@ const controller = async () => {
     const showBasicData = () => {
         base.toggleTabs('home');
         // Display Team Names
+        console.log(state.teamHome);
         base.showDisplayText("team-name--home", state.teamHome.name);
         base.showDisplayText("team-name--guest", state.teamGuest.name);
         
         // Display Rosters and table rows for Home and Guest teams
         function showRoster (teamToggle, teamID, teamRoster) {
-            console.log('teamRoster: ', teamRoster);
-            console.log('teamToggle: ', teamToggle);
-            console.log('teamID: ', teamID);
+            // console.log('teamRoster: ', teamRoster);
+            // console.log('teamToggle: ', teamToggle);
+            // console.log('teamID: ', teamID);
             for (let i = 0; i < teamRoster.length; i++ ) {
                 var playerID = teamRoster[i]._id;
                 var playerFirst = teamRoster[i].first;
@@ -205,15 +207,15 @@ const controller = async () => {
         state.teamGuest = new Team();
         state.game = new Game();
    
-        await state.teamHome.getTeam('5aff7685dd75d934b37cacaf');
-        console.log('teamHome: ', state.teamHome);
-        await state.teamGuest.getTeam('5aff770384c0b334d87688f3');
-        console.log('teamGuest: ', state.teamGuest);
+        await state.teamHome.getTeam('5b061af753c3dd2187a96174');
+        // console.log('teamHome: ', state.teamHome);
+        await state.teamGuest.getTeam('5b061be553c3dd2187a96177');
+        // console.log('teamGuest: ', state.teamGuest);
         showBasicData();
         setupEventListeners();
 
 
-        // TODO - WHEN IS THIS NECESSARY?
+        // TODO - WHEN IS THIS NECESSARY? //unclear
         // Reset the values for the Score Board Time Out and Techs
         // document.getElementById("-home-to-in").value="";
         // document.getElementById("-home-tech-in").value="";

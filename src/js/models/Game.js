@@ -85,7 +85,33 @@ export default class Game {
 
     // Add each new activity to activity object
     // Take ID from button, convert to array and then object
-    saveActivity(newActiv, val) {
+    async saveActivity(period, teamID, playerID, activityType, overwrite) {
+        console.log('teamID: ', teamID);
+        console.log('playerID: ', playerID);
+        console.log('activityType: ', activityType);
+        console.log('overwrite: ', overwrite);
+
+        try {
+            const activity = await axios.post(`http://localhost:3000/activity`, {
+                period: period,  
+                teamID: teamID, 
+                playerID: playerID,
+                activityType: activityType,
+                overwrite: overwrite
+            });
+        } catch (error) {
+                if (error.response) {
+                  console.log(error.response.data);
+                  console.log(error.response.status);
+                  console.log(error.response.headers);
+                } else if (error.request) {
+                  console.log('Request: ', error.request);
+                } else {
+                  console.log('Error', error.message);
+                }
+                console.log(error.config);
+            }
+
         console.log('activity.activities: ', this.activity.activities);
         var activCurrLength = this.activity.activities.length;
         var newActivityObj = {
