@@ -19,7 +19,7 @@ export default class Game {
     constructor () {
         this.activeTeam = 'home';
         this.summary = {
-            gameID: 'TODOLATER',
+            gameID: '', //TODO
             period: 'Q1',
             home: {
                 score: 0,
@@ -37,7 +37,7 @@ export default class Game {
             }
         };
         this.activity = {
-            gameID: 'TODOLATER',
+            gameID: '', //TODO
             activities: [
                 {
                     id:0, //TODO
@@ -52,6 +52,118 @@ export default class Game {
 
     }
 
+    // Set the teamIDs for both teams 
+    setTeamIDs(homeID, guestID) {
+        this.summary.home.teamID = homeID;
+        this.summary.guest.teamID = guestID;
+    }
+    
+    // Return which team is currently active / which tab is in foreground
+    getActiveTeam() {
+        return this.activeTeam;
+    }
+
+    setActiveTeam(team) {
+        this.activeTeam = team;
+    }
+
+    // Persist each new activity 
+    async saveActivity(period, teamID, playerID, activityType, overwrite) {
+        try {
+            const activity = await axios.post(`http://localhost:3000/activity`, {
+                period: period,  
+                teamID: teamID, 
+                playerID: playerID,
+                activityType: activityType,
+                overwrite: overwrite
+            });
+        } catch (error) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log('Request: ', error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            }
+
+        // console.log('activity.activities: ', this.activity.activities);
+        // var activCurrLength = this.activity.activities.length;
+        // var newActivityObj = {
+        //     id:((this.activity.activities[activCurrLength - 1].id) + 1),
+        //     period: this.summary.period,
+        //     teamID: newActiv[0],
+        //     playerID: newActiv[1],
+        //     activityType: newActiv[2],
+        //     overwrite: val
+        // };
+        // this.activity.activities.push(newActivityObj);
+        // console.log(newActivityObj);
+
+        // return this.activity.activities;
+    }
+
+    // Depending on activity type, 
+    // return new corresponding amount to display in player field
+    processVal(type, curField) {
+        let curAmt = Number(document.getElementById(curField).value);
+        if (isNaN(curAmt)) {
+            curAmt = 0;
+            curAmt = parseInt(curAmt, 10);
+        } else {
+            curAmt = parseInt(curAmt, 10);
+        }
+
+        for (let t of activityLookUp) {
+            if (type === t[0]) {
+                let amt = (t[1].increment);
+                let newVal = curAmt + amt;
+                return newVal;
+                }   
+        }
+    }
+        
+    // Depending on activity type and team, 
+    // update data summary object and
+    // return new corresponding summary amount and element
+    updateSummary(team, type, changeVal) {
+        for (let t of activityLookUp) {
+            if (type === t[0]) {
+                // Check if overwrite (from text input field), use change in value
+                let amt;
+                if (isNaN(changeVal)) {
+                    amt = (t[1].increment);
+                } else {
+                    amt = changeVal;
+                }
+
+                let sumField = (t[1].summaryField);
+                let sumDOM = (t[1].summaryDOMid);
+
+                this.summary[team][sumField] = this.summary[team][sumField] + amt;
+
+                let sumTot = this.summary[team][sumField];
+                sumDOM = sumDOM + team;
+                console.log('this.summary.var: ', this.summary[team]);
+                console.log(sumTot, sumDOM);
+                return [sumTot, sumDOM];
+
+            }   
+        }
+    }
+
+
+    
+    
+    
+    
+    
+    
+    
+    // TODO
     async getActivities(id) {
         try {
             const res = await axios.get(`http://localhost:3000/teams/${id}`);
@@ -66,12 +178,7 @@ export default class Game {
         }
     }
 
-    // Reset the fouls for both teams 
-    setTeamIDs(homeID, guestID) {
-        this.summary.home.teamID = homeID;
-        this.summary.guest.teamID = guestID;
-    }
-    
+
     // Reset the fouls for both teams 
     resetFouls() {
         this.summary.home.fouls = 0;
@@ -83,114 +190,11 @@ export default class Game {
         this.summary.period = per;
     }
 
-    // Add each new activity to activity object
-    // Take ID from button, convert to array and then object
-    async saveActivity(period, teamID, playerID, activityType, overwrite) {
-        console.log('teamID: ', teamID);
-        console.log('playerID: ', playerID);
-        console.log('activityType: ', activityType);
-        console.log('overwrite: ', overwrite);
-
-        try {
-            const activity = await axios.post(`http://localhost:3000/activity`, {
-                period: period,  
-                teamID: teamID, 
-                playerID: playerID,
-                activityType: activityType,
-                overwrite: overwrite
-            });
-        } catch (error) {
-                if (error.response) {
-                  console.log(error.response.data);
-                  console.log(error.response.status);
-                  console.log(error.response.headers);
-                } else if (error.request) {
-                  console.log('Request: ', error.request);
-                } else {
-                  console.log('Error', error.message);
-                }
-                console.log(error.config);
-            }
-
-        console.log('activity.activities: ', this.activity.activities);
-        var activCurrLength = this.activity.activities.length;
-        var newActivityObj = {
-            id:((this.activity.activities[activCurrLength - 1].id) + 1),
-            period: this.summary.period,
-            teamID: newActiv[0],
-            playerID: newActiv[1],
-            activityType: newActiv[2],
-            overwrite: val
-        };
-        this.activity.activities.push(newActivityObj);
-        console.log(newActivityObj);
-
-        return this.activity.activities;
-    }
-
-    // Depending on activity type and team, 
-    // update data summary object and
-    // return new corresponding summary amount and element
-    updateSummary(team, type, changeVal) {
-        for (let t of activityLookUp) {
-            if (type === t[0]) {
-                // Check if overwrite (from text input field), use change in value
-                if (isNaN(changeVal)) {
-                    var amt = (t[1].increment);
-                } else {
-                    var amt = changeVal;
-                }
-
-                var sumField = (t[1].summaryField);
-                var sumDOM = (t[1].summaryDOMid);
-                var sumTot;
-                console.log('!!!team: ', team);
-                if (team === this.summary.home.teamID) {
-                    this.summary.home[sumField] = this.summary.home[sumField] + amt;
-                    sumTot = this.summary.home[sumField];
-                    sumDOM = sumDOM + "home";
-                } else {
-                    this.summary.guest[sumField] = this.summary.guest[sumField] + amt;
-                    sumTot = this.summary.guest[sumField];
-                    sumDOM = sumDOM + "guest";
-                }
-            }   
-        }
-        return [sumTot, sumDOM];
-    }
 
 
     
-        // Depending on activity type, 
-    // return new corresponding amount to display in player field
-    updatePlayerActivity(type, el) {
-        var curAmt = document.getElementById(el).value;
-        curAmt = Number(curAmt);
-        console.log('curAmt: ', curAmt);
-        if (isNaN(curAmt)) {
-            curAmt = 0;
-            curAmt = parseInt(curAmt, 10);
-        } else {
-            curAmt = parseInt(curAmt, 10);
-        }
 
 
-        for (let t of activityLookUp) {
-            if (type === t[0]) {
-                let amt = (t[1].increment);
-                var newAmt = curAmt + amt;
-                }   
-        }
-        return newAmt;
-    }
-
-    // Return which team is currently active / which tab is in foreground
-    getActiveTeam(team) {
-        if (team) {
-            this.activeTeam = team;
-        }
-        return this.activeTeam;
-    }
  
     // Return the game's summary data for the active team
     getTeamSummary(team) {

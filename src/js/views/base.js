@@ -1,7 +1,13 @@
 // Add/update display text to a node
-export const showDisplayText = (elementID, text) => {
+export const showDisplayText = (elementID, val) => {
     let displayTeam = document.getElementById(elementID);
-    displayTeam.textContent = text;
+    if (typeof val === "number") {
+        displayTeam.value = val;
+    } else if (typeof val === "string") {
+        displayTeam.textContent = val;
+    } else {
+        console.log('Check the type of value to display.')
+    }
 };
 
 // Update various parts of UI based on top tab selection

@@ -12,11 +12,11 @@ const setupEventListeners = () => {
     // When Home or Guest tab is clicked, update flag and UI
     document.getElementById('sb__tab--home').addEventListener('click', function() {
         base.toggleTabs('home'); 
-        state.game.activeTeam = 'home';
+        state.game.setActiveTeam('home');
     });
     document.getElementById('sb__tab--guest').addEventListener('click', function() {
         base.toggleTabs('guest');
-        state.game.activeTeam = 'guest';
+        state.game.setActiveTeam('guest');
         });
 
     // When Period clicked, add Period to Activity object and update UI
@@ -68,30 +68,41 @@ const updateBB = () => {
 
 // Core function to process the inputs from buttons and text fields
 // overWriteValue and prevValue needed for text input fields only
-const process = (input, overWriteValue, prevValue) => {
+const process = async (input, overWriteValue, prevValue) => {
     let period = state.game.summary.period;
-    console.log('period: ', period);
     // Parse input activity
     let newActivityArr = input.split("-");
-    console.log('newActivityArr from index/process: ', newActivityArr);
-    let team = newActivityArr[0];
+    let teamID = newActivityArr[0];
     let playerID = newActivityArr[1];
     let activityType = newActivityArr[2];
     let changeInValue = overWriteValue - prevValue;
     if (overWriteValue === undefined) {
         overWriteValue = false;
     }
+    let updateField = teamID + '-' + [playerID] + '-' + activityType + '-in';
 
-    state.game.saveActivity(period, team, playerID, activityType, overWriteValue);
+    // Update UI, DB
+    let newVal = state.game.processVal(activityType, updateField);
+    await base.showDisplayText(updateField, newVal);
+    state.game.saveActivity(period, teamID, playerID, activityType, overWriteValue);
             
-    // TODO
-    // 2 - For each activity, update Score Board Summary data and Score Board UI
-    var activityOutput = state.game.updateSummary(team, activityType, changeInValue); 
-    var amtSB = activityOutput[0];
-    var elSB = activityOutput[1];
+    // For each activity, update Score Board Summary data and Score Board UI
+    let teamStatus = state.game.getActiveTeam();
+ 
+    // Update State
+    let newSummaryVal = await state.game.updateSummary(teamStatus, activityType, changeInValue); 
+ 
+    // Update DB
+    // TODO TODO
+    console.log('newSummaryVal: ', newSummaryVal);
+
+
+    // Update UI
+    let amtSB = newSummaryVal[0].toString();
+    let elSB = newSummaryVal[1];
     if ((activityType == "fg") || (activityType == "3p") ||
         (activityType == "fs") || (activityType == "pf")) {
-            base.showDisplayText(elSB, amtSB);
+            await base.showDisplayText(elSB, amtSB);
     };
 
     // 2B - For each foul, check and update Score Board Bonus Indicator
@@ -193,6 +204,7 @@ const controller = async () => {
 
         // Reset splash animation so it only shows on first load
         teamView.splashAnimation();
+        console.log(state.game);
 
 
     };
