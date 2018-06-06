@@ -11,8 +11,8 @@ router.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-    // res.setHeader('Access-Control-Max-Age', 7200); // Caching 
-    console.log('Time: ', Date.now());
+    res.setHeader('Access-Control-Max-Age', 7200); // Caching 
+    // console.log('Time: ', Date.now());
     next();
   });
 

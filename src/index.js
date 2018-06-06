@@ -88,18 +88,12 @@ const process = async (input, overWriteValue, prevValue) => {
             
     // Update UI, DB for SCORE BOARD SUMMARY 
     let teamStatus = state.game.getActiveTeam();
- 
     // Update State
     let newSummaryVal = await state.game.updateSummary(teamStatus, activityType, changeInValue); 
-
     // Update DB
-    // TODO TODO
     let sbType = state.game.getActivityLookUp(activityType);
     let sbVal = state.game.summary[teamStatus][sbType];  
- 
-    console.log('VAR FOR SAVESUMMARY: ', teamStatus, sbType, sbVal);
-    await state.game.saveSummary('5b06c5afffd2852a453114f7', teamStatus, sbType, sbVal);
-
+    await state.game.saveSummary('5b06c5afffd2852a453114f7', teamStatus, sbType, sbVal); // TODO: gameID
     // Update UI
     let amtSB = newSummaryVal[0].toString();
     let elSB = newSummaryVal[1];
@@ -108,6 +102,13 @@ const process = async (input, overWriteValue, prevValue) => {
             await base.showDisplayText(elSB, amtSB);
     };
 
+    ///////////////////////////////////////////////////////
+    // TODO TODO  - FUTURE JESS, THIS IS WHERE I LEFT OFF
+    // MAJOR PORTIONS COMPLETE (STATE, DB, UI): GET TEAM, 
+    // UDPATE ACTIVITIES, UPDATE SCORBOARD (SB)
+    // NEXT UP IS TO HANDLE TIER 2 FUNCTIONALITY AND I'D PICK UP STARTING NEXT LINE
+    // HARD CODED SPECIFIC GAME, NEED TO HANDLE EVERYTHING AROUND GAMES AND GAME ID
+    // OTHER TODO: WEBPACK SERVING INDEX
     // 2B - For each foul, check and update Score Board Bonus Indicator
     if (activityType == "pf") {
         updateBB();

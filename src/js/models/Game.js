@@ -91,16 +91,16 @@ export default class Game {
             }
     }
 
-    // Persist each new activity 
-    async saveSummary(team, activityType, val) {
-        console.log('saveSummary in Game');
+    // Persist the game summary  
+    async saveSummary(gameID, teamStatus, type, val) {
+        // TODO: gameID
         
         try {
             const activity = await axios.put(`http://localhost:3000/game`, {
-                gameID: '5b06c5afffd2852a453114f7',
-                activityType: activityType,
+                gameID: gameID,
+                type: type,
                 val: val, 
-                teamStatus: "home"
+                teamStatus: teamStatus
             });
         } catch (error) {
                 if (error.response) {
@@ -156,13 +156,25 @@ export default class Game {
 
                 let sumTot = this.summary[team][sumField];
                 sumDOM = sumDOM + team;
-                console.log('this.summary.var: ', this.summary[team]);
-                console.log(sumTot, sumDOM);
                 return [sumTot, sumDOM];
 
             }   
         }
     }
+
+    // Return the activity's DOM field
+    getActivityLookUp(type) {
+        for (let t of activityLookUp) {
+            if (type === t[0]) {
+                // let amt = (t[1].increment);
+                let summaryField = (t[1].summaryField);
+                return summaryField;
+                }   
+            }
+    }
+
+
+
 
 
     
@@ -199,34 +211,15 @@ export default class Game {
         this.summary.period = per;
     }
 
-
-
-    
-
-
- 
-    // Return the game's summary data for the active team
-    getTeamSummary(team) {
-        String(team);
-        let summaryString = 'summary.' + String(team);
-        return (eval(summaryString));
-    }
-
     // Return Bonus object (largely static) 
     getBonus() {
         return bonus;
     }
-    
-    // Return the activity's DOM field
-    getActivityLookUp(type) {
-        for (let t of activityLookUp) {
-            if (type === t[0]) {
-                // let amt = (t[1].increment);
-                let summaryField = (t[1].summaryField);
-                console.log('summaryField: ', summaryField);
-                return summaryField;
-                }   
-            }
-    }
-    
+
+    // // Return the game's summary data for the active team
+    // getTeamSummary(team) {
+    //     String(team);
+    //     let summaryString = 'summary.' + String(team);
+    //     return (eval(summaryString));
+    // }    
 }
