@@ -11,8 +11,8 @@ router.use(function(req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
-    res.setHeader('Access-Control-Max-Age', 7200); // Caching 
-    // console.log('Time: ', Date.now());
+    // res.setHeader('Access-Control-Max-Age', 7200); // Caching 
+    console.log('Time: ', Date.now());
     next();
   });
 
@@ -151,12 +151,12 @@ router.get('/game', async (req, res) => {
 // Update Game Summary stats for home or away team
 router.put('/game', async (req, res) => {
     try {
-        let gameID = req.body.gameID;
+        let gameID = req.body.gameID; //TODO
         let type = req.body.type;
-        let amt = req.body.amt;
-        let status = req.body.status;
+        let val = req.body.val;
+        let teamStatus = req.body.teamStatus;
         const game = await Game.findOneAndUpdate({ _id: gameID }, 
-                {[status + '.' + type]: amt}, {new: true});
+                {[teamStatus + '.' + type]: val}, {new: true});
 
         if (!game) {
             res.status(404).send(`${gameID} not found.`);

@@ -89,23 +89,32 @@ export default class Game {
                 }
                 console.log(error.config);
             }
-
-        // console.log('activity.activities: ', this.activity.activities);
-        // var activCurrLength = this.activity.activities.length;
-        // var newActivityObj = {
-        //     id:((this.activity.activities[activCurrLength - 1].id) + 1),
-        //     period: this.summary.period,
-        //     teamID: newActiv[0],
-        //     playerID: newActiv[1],
-        //     activityType: newActiv[2],
-        //     overwrite: val
-        // };
-        // this.activity.activities.push(newActivityObj);
-        // console.log(newActivityObj);
-
-        // return this.activity.activities;
     }
 
+    // Persist each new activity 
+    async saveSummary(team, activityType, val) {
+        console.log('saveSummary in Game');
+        
+        try {
+            const activity = await axios.put(`http://localhost:3000/game`, {
+                gameID: '5b06c5afffd2852a453114f7',
+                activityType: activityType,
+                val: val, 
+                teamStatus: "home"
+            });
+        } catch (error) {
+                if (error.response) {
+                    console.log(error.response.data);
+                    console.log(error.response.status);
+                    console.log(error.response.headers);
+                } else if (error.request) {
+                    console.log('Request: ', error.request);
+                } else {
+                    console.log('Error', error.message);
+                }
+                console.log(error.config);
+            }
+        }                
     // Depending on activity type, 
     // return new corresponding amount to display in player field
     processVal(type, curField) {
@@ -208,10 +217,16 @@ export default class Game {
         return bonus;
     }
     
-    // Return the activityLookUp
-    getActivityLookUp() {
-        console.log(activityLookUp);
-        return activityLookUp;
+    // Return the activity's DOM field
+    getActivityLookUp(type) {
+        for (let t of activityLookUp) {
+            if (type === t[0]) {
+                // let amt = (t[1].increment);
+                let summaryField = (t[1].summaryField);
+                console.log('summaryField: ', summaryField);
+                return summaryField;
+                }   
+            }
     }
     
 }

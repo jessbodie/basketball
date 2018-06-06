@@ -81,21 +81,24 @@ const process = async (input, overWriteValue, prevValue) => {
     }
     let updateField = teamID + '-' + [playerID] + '-' + activityType + '-in';
 
-    // Update UI, DB
+    // Update UI, DB for individual ACTIVITY
     let newVal = state.game.processVal(activityType, updateField);
     await base.showDisplayText(updateField, newVal);
     state.game.saveActivity(period, teamID, playerID, activityType, overWriteValue);
             
-    // For each activity, update Score Board Summary data and Score Board UI
+    // Update UI, DB for SCORE BOARD SUMMARY 
     let teamStatus = state.game.getActiveTeam();
  
     // Update State
     let newSummaryVal = await state.game.updateSummary(teamStatus, activityType, changeInValue); 
- 
+
     // Update DB
     // TODO TODO
-    console.log('newSummaryVal: ', newSummaryVal);
-
+    let sbType = state.game.getActivityLookUp(activityType);
+    let sbVal = state.game.summary[teamStatus][sbType];  
+ 
+    console.log('VAR FOR SAVESUMMARY: ', teamStatus, sbType, sbVal);
+    await state.game.saveSummary('5b06c5afffd2852a453114f7', teamStatus, sbType, sbVal);
 
     // Update UI
     let amtSB = newSummaryVal[0].toString();
